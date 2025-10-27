@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختيار وتخصيص البوستر</title>
+    <style>
+        @font-face {
+            font-family: 'Lyon Arabic';
+            src: url('COMM - Lyon Arabic Text Bold.otf') format('opentype');
+            font-weight: bold;
+            font-style: normal;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Lyon Arabic', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(45deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            text-align: center;
+            padding: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            padding: 40px;
+        }
+
+        .poster-selection {
+            margin-bottom: 40px;
+        }
+
+        .poster-selection h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+            font-size: 1.8rem;
+        }
+
+        .posters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .poster-card {
+            border: 3px solid transparent;
+            border-radius: 15px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .poster-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+
+        .poster-card.selected {
+            border-color: #4facfe;
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(79, 172, 254, 0.3);
+        }
+
+        .poster-card img {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .poster-card .card-footer {
+            padding: 20px;
+            text-align: center;
+            background: #f8f9fa;
+        }
+
+        .poster-card .card-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .poster-card .card-description {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .name-input-section {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+
+        .name-input-section h3 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+            font-size: 1.5rem;
+        }
+
+        .input-group {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            transition: border-color 0.3s ease;
+            text-align: center;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #4facfe;
+            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
+        }
+
+        .preview-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .preview-canvas {
+            border: 2px dashed #ddd;
+            border-radius: 15px;
+            margin: 20px auto;
+            background: white;
+            max-width: 100%;
+            height: auto;
+        }
+
+        .download-section {
+            text-align: center;
+        }
+
+        .download-btn {
+            background: linear-gradient(45deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.3);
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(79, 172, 254, 0.4);
+        }
+
+        .download-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            text-align: center;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .header p {
+                font-size: 1rem;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+            
+            .posters-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎨 اختيار وتخصيص البوستر</h1>
+            <p>اختر البوستر المفضل لديك، أدخل اسمك، وحمل التصميم المخصص</p>
+        </div>
+
+        <div class="main-content">
+            <div class="poster-selection">
+                <h2>اختر البوستر</h2>
+                <div class="posters-grid">
+                    <div class="poster-card" data-poster="poster1">
+                        <img src="poster1.jpg" alt="البوستر الأول">
+                        <div class="card-footer">
+                            <div class="card-title">البوستر الأول</div>
+                            <div class="card-description">تصميم أنيق ومميز</div>
+                        </div>
+                    </div>
+                    <div class="poster-card" data-poster="poster2">
+                        <img src="poster2.jpg" alt="البوستر الثاني">
+                        <div class="card-footer">
+                            <div class="card-title">البوستر الثاني</div>
+                            <div class="card-description">تصميم عصري وجذاب</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="name-input-section">
+                <h3>أدخل اسمك</h3>
+                <div class="input-group">
+                    <label for="userName">الاسم:</label>
+                    <input type="text" id="userName" placeholder="اكتب اسمك هنا..." maxlength="50">
+                </div>
+                <div class="error-message" id="errorMessage"></div>
+            </div>
+
+            <div class="preview-section">
+                <h3>معاينة التصميم</h3>
+                <canvas id="previewCanvas" class="preview-canvas"></canvas>
+            </div>
+
+            <div class="download-section">
+                <button class="download-btn" id="downloadBtn" disabled>
+                    📥 تحميل التصميم
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedPoster = null;
+        let userName = '';
+
+        // عناصر DOM
+        const posterCards = document.querySelectorAll('.poster-card');
+        const userNameInput = document.getElementById('userName');
+        const previewCanvas = document.getElementById('previewCanvas');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const errorMessage = document.getElementById('errorMessage');
+        const ctx = previewCanvas.getContext('2d');
+
+        // اختيار البوستر
+        posterCards.forEach(card => {
+            card.addEventListener('click', () => {
+                // إزالة التحديد من جميع البطاقات
+                posterCards.forEach(c => c.classList.remove('selected'));
+                
+                // تحديد البطاقة المختارة
+                card.classList.add('selected');
+                selectedPoster = card.dataset.poster;
+                
+                updatePreview();
+                updateDownloadButton();
+            });
+        });
+
+        // إدخال الاسم
+        userNameInput.addEventListener('input', (e) => {
+            userName = e.target.value.trim();
+            errorMessage.textContent = '';
+            
+            if (userName.length > 50) {
+                errorMessage.textContent = 'الاسم طويل جداً (الحد الأقصى 50 حرف)';
+                return;
+            }
+            
+            updatePreview();
+            updateDownloadButton();
+        });
+
+        // تحديث المعاينة
+        function updatePreview() {
+            if (!selectedPoster) {
+                previewCanvas.width = 400;
+                previewCanvas.height = 500;
+                ctx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
+                ctx.fillStyle = '#f0f0f0';
+                ctx.fillRect(0, 0, previewCanvas.width, previewCanvas.height);
+                ctx.fillStyle = '#999';
+                ctx.font = '16px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('اختر بوستر لرؤية المعاينة', previewCanvas.width/2, previewCanvas.height/2);
+                return;
+            }
+
+            const img = new Image();
+            img.onload = function() {
+                // تعيين أبعاد الكانفاس بناءً على أبعاد الصورة الأصلية
+                const maxWidth = 600;
+                const maxHeight = 800;
+                let canvasWidth = img.width;
+                let canvasHeight = img.height;
+                
+                // تقليل الحجم إذا كان كبيراً جداً للمعاينة
+                if (canvasWidth > maxWidth || canvasHeight > maxHeight) {
+                    const ratio = Math.min(maxWidth / canvasWidth, maxHeight / canvasHeight);
+                    canvasWidth = canvasWidth * ratio;
+                    canvasHeight = canvasHeight * ratio;
+                }
+                
+                previewCanvas.width = canvasWidth;
+                previewCanvas.height = canvasHeight;
+                
+                // رسم الصورة
+                ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+                ctx.drawImage(img, 0, 0, canvasWidth, canvasHeight);
+                
+                // إضافة الاسم في منتصف الصورة إذا كان موجود
+                if (userName) {
+                    const fontSize = Math.max(canvasWidth / 40, 40);
+                    ctx.fillStyle = '#335c81';
+                    ctx.font = `bold ${fontSize}px 'Lyon Arabic', Arial`;
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    
+                    ctx.fillText(userName, canvasWidth/2, canvasHeight/2.15);
+                }
+            };
+            img.src = selectedPoster + '.jpg';
+        }
+
+        // تحديث زر التحميل
+        function updateDownloadButton() {
+            const isValid = selectedPoster && userName && userName.length > 0 && userName.length <= 50;
+            downloadBtn.disabled = !isValid;
+        }
+
+        // تحميل التصميم
+        downloadBtn.addEventListener('click', () => {
+            if (!selectedPoster || !userName) {
+                errorMessage.textContent = 'يرجى اختيار بوستر وإدخال الاسم';
+                return;
+            }
+
+            // إنشاء canvas بحجم أكبر للتحميل
+            const downloadCanvas = document.createElement('canvas');
+            const downloadCtx = downloadCanvas.getContext('2d');
+            
+            const img = new Image();
+            img.onload = function() {
+                // تعيين حجم الكانفاس بناءً على حجم الصورة الأصلية
+                downloadCanvas.width = img.width;
+                downloadCanvas.height = img.height;
+                
+                // رسم الصورة
+                downloadCtx.drawImage(img, 0, 0);
+                
+                // إضافة الاسم في منتصف الصورة
+                if (userName) {
+                    const fontSize = Math.max(img.width / 40, 40);
+                    downloadCtx.fillStyle = '#335c81';
+                    downloadCtx.font = `bold ${fontSize}px 'Lyon Arabic', Arial`;
+                    downloadCtx.textAlign = 'center';
+                    downloadCtx.textBaseline = 'middle';
+                    
+                    downloadCtx.fillText(userName, img.width/2, img.height/2.15);
+                }
+                
+                // تحميل الصورة
+                downloadCanvas.toBlob((blob) => {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `${userName}.png`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                }, 'image/png');
+            };
+            img.src = selectedPoster + '.jpg';
+        });
+
+        // تحديث المعاينة الأولية
+        updatePreview();
+    </script>
+</body>
+</html>
